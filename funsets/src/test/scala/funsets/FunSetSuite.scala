@@ -110,5 +110,66 @@ class FunSetSuite extends FunSuite {
     }
   }
 
+  test("intersection contains elements that are included in each set") {
+    new TestSets {
+      val u1 = union(s1, s2)
+      val u2 = union(s1, s3)
+      val s = intersect(u1, u2)
+      assert(contains(s, 1), "Both sets should contain 1")
+      assert(!contains(s, 2), "Sets shouldn't contain 2")
+      assert(!contains(s, 3), "Sets shouldn't contain 3")
+    }
+  }
+
+  test("diff returns a set which contains all the elements of one set that are not in the second one") {
+    new TestSets {
+      val u1 = union(s2, s3)
+      val u2 = union(s1, u1)
+      val s = diff(u2, u1)
+      assert(contains(s, 1), "Set should contain 1")
+      assert(!contains(s, 2), "Set shouldn't contain 2")
+      assert(!contains(s, 3), "Set shouldn't contain 3")
+    }
+  }
+
+  test("filter returns elements of set that are accepted by predicate") {
+    new TestSets {
+      val s = union(s2, s3)
+      assert(!contains(s, 1), "Set should contain 1")
+      assert(contains(s, 2), "Set shouldn't contain 2")
+      assert(contains(s, 3), "Set shouldn't contain 3")
+    }
+  }
+
+  test("if a given predicate is true for all elements of the set") {
+    new TestSets {
+      val t = union(s1, s2)
+      val s = union(s3, t)
+      assert(forall(s, x => x > 0))
+      assert(!forall(s, x => x > 100))
+    }
+  }
+
+  test("if a set contains at least one element for which the given predicate is true") {
+    new TestSets {
+      val t = union(s1, s2)
+      val s = union(s3, t)
+      assert(exists(s, x => x == 2))
+      assert(!exists(s, x => x == 100))
+    }
+  }
+
+  test("transforms a given set into another one by applying to each of its elements the given function") {
+    new TestSets {
+      val t = union(s1, s2)
+      val s = union(s3, t)
+      val m = map(s, x => x + 2)
+      val r = intersect(s, m)
+      assert(contains(r, 3), "Set should contain 3")
+      assert(!contains(r, 1), "Set shouldn't contain 1")
+      assert(!contains(r, 2), "Set shouldn't contain 2")
+    }
+  }
+
 
 }
